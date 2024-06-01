@@ -62,10 +62,53 @@ export const createUsuario = async (req: Request, res: Response) => {
             return res.status(400).json({ message: "Erro ao cadastrar usuário" });
         }
 
-        return res.status(201).json({ message: "Usuário cadastrado com sucesso"});
+        return res.status(201).json({ message: "Usuário cadastrado com sucesso" });
 
     } catch (e) {
         console.error(e);
         return res.status(500).json({ message: "Erro ao cadastrar usuário" });
     }
+}
+
+export const login = async (req: Request, res: Response) => {
+
+    try {
+
+        const {
+            email,
+            senha
+        } = req.body;
+
+        if (!email || !senha) {
+            return res.status(400).json({ message: "Por favor, preecha todos os campos" });
+        }
+
+        const usuario = await UsuarioModel.findOne({ email });
+
+        if (!usuario) {
+            return res.status(400).json({ message: "Email ou senha inválidos" });
+        }
+
+        const isMatchPassword = await bcrypt.compare(senha, usuario.senha);
+
+        if (!isMatchPassword) {
+            return res.status(400).json({ message: "Email ou senha inválidos" });
+        }
+
+        const userObject = usuario.toObject();
+
+        return res.status(200).json({
+            message: "Usuário logado com sucesso",
+            usuario: {
+                ...userObject,
+                senha: undefined
+            }
+        });
+
+
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({ message: "Erro ao fazer login" });
+    }
+
 }
