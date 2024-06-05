@@ -13,7 +13,8 @@ export const createUsuario = async (req: Request, res: Response) => {
             endereco,
             tipo_sanguineo,
             peso,
-            historico_medico
+            historico_medico,
+            role
         } = req.body;
 
         if (!nome || !email || !senha || !data_nascimento || !telefone || !tipo_sanguineo || !peso) {
@@ -55,7 +56,8 @@ export const createUsuario = async (req: Request, res: Response) => {
             endereco,
             tipo_sanguineo,
             peso,
-            historico_medico
+            historico_medico,
+            role: role || 'user'
         });
 
         if (!usuario) {

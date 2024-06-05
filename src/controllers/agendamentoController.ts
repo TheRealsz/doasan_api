@@ -5,13 +5,13 @@ import { UsuarioModel } from "../models/usuario";
 export const createAgendamento = async (req: Request, res: Response) => {
     try {
 
-        const doadorId = req.params.doadorId;
+        const usuarioId = req.params.usuarioId;
 
-        if (!doadorId) {
+        if (!usuarioId) {
             return res.status(400).json({ message: "Informe o id do doador" });
         }
 
-        const usuario = await UsuarioModel.findById(doadorId);
+        const usuario = await UsuarioModel.findById(usuarioId);
 
         if (!usuario) {
             return res.status(404).json({ message: "Usuario não encontrado" });
@@ -40,9 +40,10 @@ export const createAgendamento = async (req: Request, res: Response) => {
         doacaoDate.setMinutes(doacaoDate.getMinutes() - doacaoDate.getTimezoneOffset());
 
         await AgendamentoModel.create({
-            doador_id: doadorId,
+            doador_id: usuarioId,
             centro_coleta,
-            data_doacao: doacaoDate.toISOString()
+            data_doacao: doacaoDate.toISOString(),
+            tipo_sanguineo: usuario.tipo_sanguineo
         })
 
         return res.status(201).json({ message: "Agendamento realizado com sucesso" });
