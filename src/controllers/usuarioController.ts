@@ -114,3 +114,25 @@ export const login = async (req: Request, res: Response) => {
     }
 
 }
+
+export const getUserProfile = async (req: Request, res: Response) => {
+    try {
+        const usuarioId = req.params.usuarioId;
+
+        const usuario = await UsuarioModel.findById(usuarioId);
+
+        if (!usuario) {
+            return res.status(404).json({ message: "Usuario não encontrado" });
+        }
+
+        const userObject = usuario.toObject();
+
+        return res.status(200).json({
+            ...userObject,
+            senha: undefined,
+        });
+    } catch (e) {
+        console.error(e);
+        return res.status(500).json({ message: "Erro ao buscar dados do usuário" });
+    }
+}

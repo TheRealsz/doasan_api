@@ -104,3 +104,34 @@ export const getAgendamentosQuantity = async (req: Request, res: Response) => {
         res.status(500).json({ message: "Erro ao buscar agendamentos" });
     }
 }
+
+export const getAgendamentosByUser = async (req: Request, res: Response) => {
+    try {
+        const usuarioId = req.params.usuarioId;
+
+        if (!usuarioId) {
+            return res.status(400).json({ message: "Informe o id do usuário" });
+        }
+
+        const agendamentos = await AgendamentoModel.find({ doador_id: usuarioId });
+
+        if (!agendamentos.length) {
+            return res.status(404).json({ message: "Nenhum agendamento encontrado" });
+        }
+
+        const notifications = agendamentos.map(agendamento => {
+            const data_doacao = new Date(agendamento.data_doacao.toString());
+            return {
+                message: `Você agendou uma doação de sangue`,
+                date: data_doacao.toISOString().split('T')[0],
+                time: data_doacao.toISOString().split('T')[1].split('.')[0],
+                location: agendamento.centro_coleta
+            };
+        });
+
+        return res.status(200).json(notifications);
+    } catch (e) {
+        console.log(e);
+        res.status(500).json({ message: "Erro ao buscar agendamentos" });
+    }
+}; 
