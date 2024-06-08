@@ -51,6 +51,10 @@ export const getCampanhas = async (req: Request, res: Response) => {
             campanha.img = `http://localhost:3001/${campanha.img}`
         })
 
+        campanhas.sort((a, b) => {
+            return new Date((b as any).createdAt).getTime() - new Date((a as any).createdAt).getTime()
+        })
+
         return res.status(200).json(campanhas);
 
     } catch (e) {
